@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>កម្មវិធីបង្កើតកាតសិស្សសាលា</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Khmer and English -->
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        /* CSS for A4 Print Layout */
+        @media print {
+            body {
+                background-color: #ffffff;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-area {
+                display: block !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+        }
+
+        /* 4x6 Aspect Ratio container for Card Photo */
+        .photo-container {
+            width: 2.1in;
+            height: 2.8in;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Standard ID Card Size in Inches (approx 3.375" x 2.125" vertical or horizontal) */
+        /* For standard CR80 layout we use 2.35in x 3.8in to support additional text beautifully */
+        .student-card {
+            width: 2.35in;
+            height: 3.8in;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: white;
+            border-radius: 8px;
+            font-size: 8px; /* Compact font for small sizes */
+        }
+
+        .student-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Printable grid */
+        .print-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            justify-items: center;
+            align-content: start;
+            width: 100%;
+            max-width: 8.27in; /* A4 Width minus margins */
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen pb-12">
+
+    <!-- Header Navigation -->
+    <header class="bg-blue-800 text-white shadow-md no-print">
+        <div class="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-2 rounded-lg text-blue-800">
+                    <i class="fa-solid fa-id-card text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide">ប្រព័ន្ធបង្កើតកាតសិស្សស្វ័យប្រវត្ត</h1>
+                    <p class="text-xs text-blue-200">រចនាស្អាត បញ្ចូលរូបថត ៤x៦ និងបោះពុម្ពម្តងបាន ១០កាត</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-sm transition-all text-sm">
+                    <i class="fa-solid fa-print"></i> បោះពុម្ពកាតទាំងអស់ (Print)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 no-print">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Panel: Configurations & Inputs (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <!-- School & Card Template Configuration -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h2 class="text-md font-semibold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                        <i class="fa-solid fa-school text-blue-600"></i> កំណត់ព័ត៌មានសាលា និងរចនាបថ
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ឈ្មោះសាលារៀន (ភាសាខ្មែរ)</label>
+                            <input type="text" id="schoolNameKh" value="វិទ្យាល័យតេជោ ហ៊ុន សែន ទឹកហូត" oninput="updateAllCards()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ឈ្មោះសាលារៀន (English)</label>
+                            <input type="text" id="schoolNameEn" value="TECHO HUN SEN TUEK HOUT HIGH SCHOOL" oninput="updateAllCards()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">ពណ៌ចម្បង (Primary)</label>
+                                <div class="flex gap-2">
+                                    <input type="color" id="primaryColor" value="#1e3a8a" onchange="updateAllCards()" class="w-10 h-10 border border-slate-300 rounded-lg cursor-pointer">
+                                    <input type="text" id="primaryColorHex" value="#1e3a8a" class="w-full text-center border border-slate-300 rounded-lg text-xs" readonly>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-600 mb-1">ពណ៌បន្ទាប់បន្សំ (Secondary)</label>
+                                <div class="flex gap-2">
+                                    <input type="color" id="secondaryColor" value="#f59e0b" onchange="updateAllCards()" class="w-10 h-10 border border-slate-300 rounded-lg cursor-pointer">
+                                    <input type="text" id="secondaryColorHex" value="#f59e0b" class="w-full text-center border border-slate-300 rounded-lg text-xs" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ឡូហ្គោសាលា (រូបភាព)</label>
+                            <div class="flex items-center gap-3">
+                                <label class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-lg p-2 cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="text-xs text-slate-500" id="logoFileName"><i class="fa-solid fa-upload"></i> ជ្រើសរើសឡូហ្គោ</span>
+                                    <input type="file" id="schoolLogoInput" accept="image/*" onchange="loadLogo(event)" class="hidden">
+                                </label>
+                                <button type="button" onclick="useDefaultLogo()" class="text-xs text-blue-600 hover:underline">ប្រើឡូហ្គោគំរូ</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ហត្ថលេខា/ត្រា នាយកសាលា</label>
+                            <div class="flex items-center gap-3">
+                                <label class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-lg p-2 cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="text-xs text-slate-500" id="signatureFileName"><i class="fa-solid fa-upload"></i> ជ្រើសរើសហត្ថលេខា</span>
+                                    <input type="file" id="signatureInput" accept="image/*" onchange="loadSignature(event)" class="hidden">
+                                </label>
+                                <button type="button" onclick="useDefaultSignature()" class="text-xs text-blue-600 hover:underline">ប្រើលំនាំដើម</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Student Data -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h2 class="text-md font-semibold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-user-plus text-blue-600"></i> បញ្ចូលព័ត៌មានសិស្ស (សរុប <span id="studentCount" class="text-blue-600 font-bold">10</span>/10)
+                        </h2>
+                        <button type="button" onclick="loadDemoData()" class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded hover:bg-blue-100 transition-all font-medium">
+                            <i class="fa-solid fa-database"></i> ប្រើទិន្នន័យគំរូ (១០នាក់)
+                        </button>
+                    </div>
+
+                    <!-- Compact Quick Input Form -->
+                    <form id="studentForm" onsubmit="addOrUpdateStudent(event)" class="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
+                        <input type="hidden" id="editIndex" value="-1">
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">លេខសម្គាល់ (ID)</label>
+                                <input type="text" id="studId" required class="w-full px-2 py-1 border border-slate-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">ថ្នាក់រៀន (Class)</label>
+                                <input type="text" id="studClass" required placeholder="ឧ. ១២អា១" class="w-full px-2 py-1 border border-slate-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">ឈ្មោះខ្មែរ</label>
+                                <input type="text" id="studNameKh" required placeholder="កែវ សុខា" class="w-full px-2 py-1 border border-slate-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">ឈ្មោះឡាតាំង</label>
+                                <input type="text" id="studNameEn" required placeholder="KEO SOKHA" class="w-full px-2 py-1 border border-slate-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">ភេទ</label>
+                                <select id="studGender" class="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    <option value="ប្រុស">ប្រុស</option>
+                                    <option value="ស្រី">ស្រី</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-medium text-slate-600 mb-0.5">ថ្ងៃខែឆ្នាំកំណើត</label>
+                                <input type="text" id="studDob" required placeholder="០១-មករា-២០០៨" class="w-full px-2 py-1 border border-slate-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-600 mb-0.5">រូបថត ៤x៦ (សមាមាត្រ 3:4)</label>
+                            <div class="flex items-center gap-2">
+                                <label class="flex-1 flex items-center justify-between border border-dashed border-slate-300 rounded px-2 py-1 bg-white cursor-pointer hover:bg-slate-50">
+                                    <span class="text-xs text-slate-500 truncate" id="photoFileName">ជ្រើសរើសរូបថត...</span>
+                                    <input type="file" id="studPhotoInput" accept="image/*" onchange="previewStudentPhoto(event)" class="hidden">
+                                </label>
+                                <div id="photoPreviewContainer" class="w-8 h-10 border border-slate-300 rounded bg-slate-100 hidden overflow-hidden">
+                                    <img id="photoPreview" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex gap-2">
+                            <button type="submit" id="btnSubmit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-3 rounded text-xs font-semibold flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-plus"></i> រក្សាទុកក្នុងបញ្ជី
+                            </button>
+                            <button type="button" onclick="resetForm()" class="bg-slate-300 hover:bg-slate-400 text-slate-800 py-1.5 px-3 rounded text-xs font-semibold">
+                                សម្អាត
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Table of Students (Max 10) -->
+                    <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                    <th class="p-2 font-semibold">រូបថត</th>
+                                    <th class="p-2 font-semibold">អត្តលេខ</th>
+                                    <th class="p-2 font-semibold">ឈ្មោះខ្មែរ</th>
+                                    <th class="p-2 font-semibold">ភេទ/ថ្នាក់</th>
+                                    <th class="p-2 font-semibold text-right">សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody" class="divide-y divide-slate-100 text-slate-700">
+                                <!-- Student rows will render here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Panel: Live A4 Grid Preview (7 Cols) -->
+            <div class="lg:col-span-7">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 sticky top-4">
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <div>
+                            <h2 class="text-md font-semibold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-eye text-blue-600"></i> ទិដ្ឋភាពបោះពុម្ពគំរូ (A4 Preview)
+                            </h2>
+                            <p class="text-xs text-slate-500">កាតត្រូវបានរៀបចំស្វ័យប្រវត្តសម្រាប់ការបោះពុម្ព (ទំហំ ២.៣៥" x ៣.៨")</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-print"></i> ព្រីនឥឡូវនេះ
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Virtual A4 Page representation -->
+                    <div class="border-2 border-dashed border-slate-300 p-4 bg-slate-200 rounded-lg flex justify-center overflow-x-auto">
+                        <div class="bg-white p-[0.3in] shadow-2xl rounded" style="width: 8.27in; min-height: 11.69in; box-sizing: border-box;">
+                            <!-- Header on A4 to indicate grid, hidden in print -->
+                            <div class="text-center text-[10px] text-slate-400 border-b border-dashed border-slate-300 pb-2 mb-4 no-print flex justify-between">
+                                <span>កម្រាស់ក្រដាស A4 (8.27" x 11.69")</span>
+                                <span class="font-semibold text-blue-600">កាតសរុប៖ <span id="previewCount">0</span>/10</span>
+                            </div>
+                            
+                            <!-- Printable Grid Area -->
+                            <div id="printContainer" class="print-grid">
+                                <!-- Cards will be dynamically appended here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Hidden Printable Page (Fully shown only during Print preview) -->
+    <div class="hidden print-area">
+        <div id="realPrintContainer" class="print-grid">
+            <!-- Same cards cloned for real print output -->
+        </div>
+    </div>
+
+    <!-- Script Section -->
+    <script>
+        // Color Syncing
+        document.getElementById('primaryColor').addEventListener('input', function(e) {
+            document.getElementById('primaryColorHex').value = e.target.value.toUpperCase();
+        });
+        document.getElementById('secondaryColor').addEventListener('input', function(e) {
+            document.getElementById('secondaryColorHex').value = e.target.value.toUpperCase();
+        });
+
+        // Global State
+        let students = [];
+        let schoolLogo = ''; // Base64
+        let schoolSignature = ''; // Base64
+
+        // Default SVG Assets as Placeholders
+        const DEFAULT_LOGO_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><circle cx="50" cy="50" r="45" fill="%231e3a8a"/><polygon points="50,15 80,35 80,45 20,45 20,35" fill="%23f59e0b"/><rect x="25" y="45" width="8" height="25" fill="%23ffffff"/><rect x="39" y="45" width="8" height="25" fill="%23ffffff"/><rect x="53" y="45" width="8" height="25" fill="%23ffffff"/><rect x="67" y="45" width="8" height="25" fill="%23ffffff"/><rect x="15" y="70" width="70" height="8" fill="%23f59e0b"/><polygon points="50,22 70,35 30,35" fill="%23ffffff"/><circle cx="50" cy="57" r="5" fill="%23f59e0b"/></svg>`;
+        
+        const DEFAULT_SIGNATURE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 50" width="120" height="50"><path d="M10,35 Q30,10 50,30 T90,20 T110,30" stroke="%231d4ed8" stroke-width="2" fill="none"/><path d="M40,40 Q55,15 70,35" stroke="%231d4ed8" stroke-width="1.5" fill="none"/><circle cx="95" cy="18" r="1.5" fill="%231d4ed8"/></svg>`;
+
+        const DEFAULT_AVATAR_MALE = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23e2e8f0"/><circle cx="50" cy="40" r="20" fill="%2394a3b8"/><path d="M20,80 C20,60 30,60 50,60 C70,60 80,60 80,80 Z" fill="%2394a3b8"/></svg>`;
+        const DEFAULT_AVATAR_FEMALE = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23fce7f3"/><circle cx="50" cy="40" r="20" fill="%23f472b6"/><path d="M20,80 C20,62 30,62 50,62 C70,62 80,62 80,80 Z" fill="%23f472b6"/><path d="M35,30 Q50,15 65,30" stroke="%23db2777" stroke-width="4" fill="none"/></svg>`;
+
+        // Initialize App
+        window.onload = function() {
+            schoolLogo = DEFAULT_LOGO_SVG;
+            schoolSignature = DEFAULT_SIGNATURE_SVG;
+            loadDemoData();
+        };
+
+        function useDefaultLogo() {
+            schoolLogo = DEFAULT_LOGO_SVG;
+            document.getElementById('logoFileName').innerText = "ប្រើឡូហ្គោគំរូ";
+            updateAllCards();
+        }
+
+        function useDefaultSignature() {
+            schoolSignature = DEFAULT_SIGNATURE_SVG;
+            document.getElementById('signatureFileName').innerText = "ប្រើហត្ថលេខាគំរូ";
+            updateAllCards();
+        }
+
+        // Load School Logo
+        function loadLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('logoFileName').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    schoolLogo = e.target.result;
+                    updateAllCards();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Load Principal Signature
+        function loadSignature(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('signatureFileName').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    schoolSignature = e.target.result;
+                    updateAllCards();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Preview single student photo during input
+        function previewStudentPhoto(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('photoPreviewContainer');
+            const preview = document.getElementById('photoPreview');
+            const fileNameSpan = document.getElementById('photoFileName');
+
+            if (file) {
+                fileNameSpan.innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Reset the input form
+        function resetForm() {
+            document.getElementById('studentForm').reset();
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('photoPreviewContainer').classList.add('hidden');
+            document.getElementById('photoPreview').src = "";
+            document.getElementById('photoFileName').innerText = "ជ្រើសរើសរូបថត...";
+            document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-plus"></i> រក្សាទុកក្នុងបញ្ជី`;
+        }
+
+        // Add or Update student item
+        function addOrUpdateStudent(event) {
+            event.preventDefault();
+            
+            const index = parseInt(document.getElementById('editIndex').value);
+            const id = document.getElementById('studId').value.trim();
+            const classVal = document.getElementById('studClass').value.trim();
+            const nameKh = document.getElementById('studNameKh').value.trim();
+            const nameEn = document.getElementById('studNameEn').value.trim().toUpperCase();
+            const gender = document.getElementById('studGender').value;
+            const dob = document.getElementById('studDob').value.trim();
+            
+            let photoSrc = gender === 'ស្រី' ? DEFAULT_AVATAR_FEMALE : DEFAULT_AVATAR_MALE;
+            const photoInput = document.getElementById('studPhotoInput');
+            
+            const executeSave = (finalPhoto) => {
+                const studentData = {
+                    id,
+                    classVal,
+                    nameKh,
+                    nameEn,
+                    gender,
+                    dob,
+                    photo: finalPhoto
+                };
+
+                if (index === -1) {
+                    // Add Mode
+                    if (students.length >= 10) {
+                        alertMessage("ការព្រមាន", "អ្នកអាចបញ្ចូលកាតបានត្រឹមតែ ១០ កាតប៉ុណ្ណោះក្នុងពេលតែមួយ!", "warning");
+                        return;
+                    }
+                    students.push(studentData);
+                } else {
+                    // Edit Mode
+                    students[index] = studentData;
+                }
+
+                resetForm();
+                renderStudentTable();
+                updateAllCards();
+            };
+
+            if (photoInput.files && photoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    executeSave(e.target.result);
+                };
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                // If editing and didn't change photo, keep old photo
+                if (index !== -1 && students[index]) {
+                    executeSave(students[index].photo);
+                } else {
+                    executeSave(photoSrc);
+                }
+            }
+        }
+
+        // Load 10 Demo Students Data automatically
+        function loadDemoData() {
+            students = [
+                { id: "NGS-00101", classVal: "១២អា១", nameKh: "សោភា មុន្នីរ័ត្ន", nameEn: "SOPHEA MUNYROTH", gender: "ស្រី", dob: "១២-មិថុនា-២០០៨", photo: DEFAULT_AVATAR_FEMALE },
+                { id: "NGS-00102", classVal: "១២អា១", nameKh: "ចាន់ សុខហេង", nameEn: "CHAN SOKHENG", gender: "ប្រុស", dob: "០៥-កុម្ភៈ-២០០៨", photo: DEFAULT_AVATAR_MALE },
+                { id: "NGS-00103", classVal: "១២អា១", nameKh: "គឹម លីហួរ", nameEn: "KIM LYHOUR", gender: "ប្រុស", dob: "២០-មីនា-២០០៨", photo: DEFAULT_AVATAR_MALE },
+                { id: "NGS-00104", classVal: "១២អា២", nameKh: "លី ស្រីពៅ", nameEn: "LY SREYPOV", gender: "ស្រី", dob: "១៥-សីហា-២០០៨", photo: DEFAULT_AVATAR_FEMALE },
+                { id: "NGS-00105", classVal: "១២អា២", nameKh: "នួន សុផាត", nameEn: "NOUN SOPHAT", gender: "ប្រុស", dob: "០៩-កញ្ញា-២០០៧", photo: DEFAULT_AVATAR_MALE },
+                { id: "NGS-00106", classVal: "១២អា៣", nameKh: "សេង ដារ៉ា", nameEn: "SENG DARA", gender: "ប្រុស", dob: "០១-មករា-២០០៨", photo: DEFAULT_AVATAR_MALE },
+                { id: "NGS-00107", classVal: "១២អា៣", nameKh: "ភក្តី ទេវី", nameEn: "PHAKDEY TEVY", gender: "ស្រី", dob: "២៥-វិច្ឆិកា-២០០៨", photo: DEFAULT_AVATAR_FEMALE },
+                { id: "NGS-00108", classVal: "១២អា៤", nameKh: "មុត ចាន់ណា", nameEn: "MUT CHANNA", gender: "ប្រុស", dob: "១៤-មេសា-២០០៨", photo: DEFAULT_AVATAR_MALE },
+                { id: "NGS-00109", classVal: "១២អា៤", nameKh: "អ៊ូ ម៉ារីណា", nameEn: "OU MARINA", gender: "ស្រី", dob: "៣០-ធ្នូ-២០០៨", photo: DEFAULT_AVATAR_FEMALE },
+                { id: "NGS-00110", classVal: "១២អា៤", nameKh: "កែវ រតនៈ", nameEn: "KEO RATANAK", gender: "ប្រុស", dob: "០景-តុលា-២០០៧", photo: DEFAULT_AVATAR_MALE }
+            ];
+            renderStudentTable();
+            updateAllCards();
+        }
+
+        // Render data to Left Table
+        function renderStudentTable() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+            
+            document.getElementById('studentCount').innerText = students.length;
+            document.getElementById('previewCount').innerText = students.length;
+
+            students.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-all";
+                tr.innerHTML = `
+                    <td class="p-2">
+                        <div class="w-8 h-10 rounded border border-slate-200 overflow-hidden">
+                            <img src="${student.photo}" class="w-full h-full object-cover">
+                        </div>
+                    </td>
+                    <td class="p-2 font-mono font-semibold text-slate-800">${student.id}</td>
+                    <td class="p-2">
+                        <div class="font-semibold text-slate-900">${student.nameKh}</div>
+                        <div class="text-[10px] text-slate-400">${student.nameEn}</div>
+                    </td>
+                    <td class="p-2">
+                        <span class="px-1.5 py-0.5 rounded text-[10px] ${student.gender === 'ស្រី' ? 'bg-pink-100 text-pink-700' : 'bg-blue-100 text-blue-700'}">${student.gender}</span>
+                        <div class="text-[10px] text-slate-500 mt-1">${student.classVal}</div>
+                    </td>
+                    <td class="p-2 text-right space-x-1">
+                        <button onclick="editStudent(${index})" class="text-blue-600 hover:text-blue-800 p-1"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteStudent(${index})" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Edit existing student details
+        function editStudent(index) {
+            const student = students[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('studId').value = student.id;
+            document.getElementById('studClass').value = student.classVal;
+            document.getElementById('studNameKh').value = student.nameKh;
+            document.getElementById('studNameEn').value = student.nameEn;
+            document.getElementById('studGender').value = student.gender;
+            document.getElementById('studDob').value = student.dob;
+            
+            const previewContainer = document.getElementById('photoPreviewContainer');
+            const preview = document.getElementById('photoPreview');
+            preview.src = student.photo;
+            previewContainer.classList.remove('hidden');
+            document.getElementById('photoFileName').innerText = "រូបថតបច្ចុប្បន្ន";
+
+            document.getElementById('btnSubmit').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> កែប្រែព័ត៌មាន`;
+            document.getElementById('studId').focus();
+        }
+
+        // Delete student from list
+        function deleteStudent(index) {
+            if (confirm("តើអ្នកពិតជាចង់លុបសិស្សនេះមែនទេ?")) {
+                students.splice(index, 1);
+                renderStudentTable();
+                updateAllCards();
+            }
+        }
+
+        // Build HTML template of the card dynamically
+        function generateCardHTML(student, primColor, secColor, nameKhSchool, nameEnSchool) {
+            return `
+            <div class="student-card flex flex-col justify-between border relative bg-white select-none">
+                <!-- Top Decorative Header with School Logo -->
+                <div style="background-color: ${primColor}" class="p-2 text-white flex items-center gap-1.5 relative z-10">
+                    <img src="${schoolLogo}" class="w-7 h-7 object-contain bg-white rounded-full p-0.5 border border-amber-400" alt="Logo">
+                    <div class="leading-tight flex-1">
+                        <h3 class="text-[7.5px] font-bold text-center tracking-wide font-sans truncate" style="font-family: 'Kantumruy Pro', sans-serif;">${nameKhSchool}</h3>
+                        <p class="text-[5.5px] text-center text-slate-200 tracking-tight font-mono truncate">${nameEnSchool}</p>
+                    </div>
+                </div>
+
+                <!-- Beautiful Semi-transparent (Watermark) Logo in Background -->
+                <div class="absolute inset-0 z-0 pointer-events-none flex items-center justify-center opacity-[0.08]">
+                    <img src="${schoolLogo}" class="w-[140px] h-[140px] object-contain select-none" alt="Watermark">
+                </div>
+
+                <!-- Card Body (Photo & Information) -->
+                <div class="p-2 flex-1 flex flex-col justify-between z-10">
+                    <!-- Title "STUDENT CARD" -->
+                    <div class="text-center mb-1.5">
+                        <span style="background-color: ${secColor}" class="px-3 py-0.5 text-white text-[7.5px] font-bold rounded-full uppercase tracking-wider">កាតសម្គាល់ខ្លួនសិស្ស</span>
+                    </div>
+
+                    <!-- Layout: Image and Details Side-by-Side or Centered -->
+                    <div class="grid grid-cols-12 gap-2 items-center">
+                        <!-- Photo 4x6 (Left Side) -->
+                        <div class="col-span-5 flex flex-col items-center">
+                            <div class="border-2 rounded overflow-hidden bg-slate-50 relative flex items-center justify-center shadow-inner" style="border-color: ${primColor}; width: 68px; height: 91px;">
+                                <img src="${student.photo}" class="w-full h-full object-cover">
+                            </div>
+                            <!-- Small ID block under photo -->
+                            <div class="text-center mt-1 w-full bg-slate-100 rounded py-0.5 border border-slate-200">
+                                <span class="text-[6.5px] font-mono font-bold text-slate-700">${student.id}</span>
+                            </div>
+                        </div>
+
+                        <!-- Info details (Right Side) -->
+                        <div class="col-span-7 space-y-1 text-slate-800">
+                            <div>
+                                <span class="text-[5.5px] text-slate-400 uppercase block leading-none">ឈ្មោះខ្មែរ / Name KH</span>
+                                <span class="text-[9px] font-bold block text-blue-900 leading-tight">${student.nameKh}</span>
+                            </div>
+                            <div>
+                                <span class="text-[5.5px] text-slate-400 uppercase block leading-none">ឈ្មោះឡាតាំង / Name EN</span>
+                                <span class="text-[8px] font-mono font-semibold block text-slate-800 uppercase leading-tight">${student.nameEn}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-1">
+                                <div>
+                                    <span class="text-[5.5px] text-slate-400 uppercase block leading-none">ភេទ / Sex</span>
+                                    <span class="text-[7.5px] font-semibold block">${student.gender}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[5.5px] text-slate-400 uppercase block leading-none">ថ្នាក់ / Class</span>
+                                    <span class="text-[7.5px] font-bold block text-emerald-700">${student.classVal}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-[5.5px] text-slate-400 uppercase block leading-none">ថ្ងៃខែឆ្នាំកំណើត / D.O.B</span>
+                                <span class="text-[7px] font-semibold block text-slate-700">${student.dob}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer (School Year, Barcode, & Signature with Seen and Approved text) -->
+                <div class="border-t border-dashed border-slate-200 p-1.5 flex justify-between items-end z-10 bg-slate-50 bg-opacity-90">
+                    <!-- Left: Educational Year & Dynamic Barcode pattern -->
+                    <div class="flex flex-col justify-center">
+                        <span class="text-[5.5px] text-slate-500 font-medium">ឆ្នាំសិក្សា: ២០២៥ - ២០២៦</span>
+                        <!-- Fake Barcode Representation -->
+                        <div class="flex items-end h-3 gap-[1px] mt-0.5">
+                            <div class="w-[1.5px] h-full bg-slate-800"></div>
+                            <div class="w-[0.5px] h-full bg-slate-800"></div>
+                            <div class="w-[2px] h-4/5 bg-slate-800"></div>
+                            <div class="w-[0.5px] h-full bg-slate-800"></div>
+                            <div class="w-[1px] h-full bg-slate-800"></div>
+                            <div class="w-[1.5px] h-3/5 bg-slate-800"></div>
+                            <div class="w-[2px] h-full bg-slate-800"></div>
+                            <div class="w-[0.5px] h-2/5 bg-slate-800"></div>
+                            <div class="w-[1px] h-full bg-slate-800"></div>
+                            <div class="w-[1.5px] h-full bg-slate-800"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Verification Date, Seen and Approved, Principal Signature -->
+                    <div class="text-right flex flex-col items-center justify-end leading-[1.1]">
+                        <span class="text-[4px] text-slate-500 block font-semibold">បានឃើញ និងឯកភាព</span>
+                        <span class="text-[3.8px] text-slate-400 block">ថ្ងៃទី....... ខែ...... ឆ្នាំ២០២...</span>
+                        <span class="text-[5px] font-bold text-slate-800 block mt-0.5">នាយកសាលា</span>
+                        <div class="h-5 w-10 relative my-0.5 flex items-center justify-center">
+                            <img src="${schoolSignature}" class="max-h-full max-w-full object-contain">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accent Line at the bottom -->
+                <div style="background-color: ${secColor}" class="h-1 w-full"></div>
+            </div>
+            `;
+        }
+
+        // Update card templates both in preview and printable areas
+        function updateAllCards() {
+            const previewContainer = document.getElementById('printContainer');
+            const realPrintContainer = document.getElementById('realPrintContainer');
+            
+            previewContainer.innerHTML = '';
+            realPrintContainer.innerHTML = '';
+
+            const primColor = document.getElementById('primaryColor').value;
+            const secColor = document.getElementById('secondaryColor').value;
+            const nameKhSchool = document.getElementById('schoolNameKh').value;
+            const nameEnSchool = document.getElementById('schoolNameEn').value;
+
+            if (students.length === 0) {
+                const emptyMsg = `
+                    <div class="col-span-2 py-20 text-center text-slate-400 w-full">
+                        <i class="fa-solid fa-folder-open text-4xl mb-2 block"></i>
+                        មិនទាន់មានទិន្នន័យសិស្សនៅឡើយទេ។ សូមបន្ថែមសិស្ស ឬចុច "ប្រើទិន្នន័យគំរូ"។
+                    </div>
+                `;
+                previewContainer.innerHTML = emptyMsg;
+                return;
+            }
+
+            students.forEach(student => {
+                const cardHTML = generateCardHTML(student, primColor, secColor, nameKhSchool, nameEnSchool);
+                
+                // For preview area
+                const previewWrapper = document.createElement('div');
+                previewWrapper.innerHTML = cardHTML;
+                previewContainer.appendChild(previewWrapper.firstElementChild);
+
+                // For actual print area
+                const printWrapper = document.createElement('div');
+                printWrapper.innerHTML = cardHTML;
+                realPrintContainer.appendChild(printWrapper.firstElementChild);
+            });
+        }
+
+        // Custom Friendly Toast / Alert message since window.alert is blocked in iframes
+        function alertMessage(title, text, iconType) {
+            const alertBox = document.createElement('div');
+            alertBox.className = "fixed top-5 right-5 bg-white border-l-4 border-amber-500 shadow-xl p-4 rounded z-50 flex gap-3 max-w-md animate-bounce no-print";
+            alertBox.innerHTML = `
+                <div class="text-amber-500 text-lg"><i class="fa-solid fa-circle-exclamation"></i></div>
+                <div>
+                    <h4 class="font-bold text-sm text-slate-800">${title}</h4>
+                    <p class="text-xs text-slate-600 mt-0.5">${text}</p>
+                </div>
+            `;
+            document.body.appendChild(alertBox);
+            setTimeout(() => {
+                alertBox.remove();
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
