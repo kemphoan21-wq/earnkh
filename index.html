@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management System</title>
+    <!-- ប្រើ Font Awesome សម្រាប់រូបតំណាង (Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #f4f6f9;
+        }
+
+        /* រចនា Sidebar ពណ៌ខៀវស្រដៀងក្នុងរូបភាព */
+        .sidebar {
+            width: 280px;
+            background-color: #2b335e;
+            height: 100vh;
+            color: #ffffff;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 10px 0;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li a:hover {
+            background-color: #3b457a;
+            color: #ffffff;
+        }
+
+        .sidebar-menu li a i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu li a .arrow {
+            margin-left: auto;
+            font-size: 12px;
+        }
+
+        /* ពណ៌លឿងសម្រាប់ Menu របាយការណ៍ខាងក្រោម */
+        .sidebar-menu li.report-menu a {
+            background-color: #f0a53a;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .sidebar-menu li.report-menu a:hover {
+            background-color: #d9912b;
+        }
+
+        /* ផ្នែកមាតិកាខាងស្តាំ */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .header {
+            background: #fff;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="sidebar-menu">
+            <li><a href="#"><i class="fa-solid fa-house"></i> សង្ខេបព័ត៌មានសំខាន់ៗ</a></li>
+            <li><a href="#"><i class="fa-solid fa-users"></i> ព័ត៌មានសិស្ស <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-money-check-dollar"></i> ទូទាត់ប្រាក់ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-dollar-sign"></i> ប្រតិបត្តិការគណនេយ្យ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-address-card"></i> ការប្រឡង <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-graduation-cap"></i> កម្មវិធីអប់រំ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-user-check"></i> បញ្ជីអវត្តមាន <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-bus"></i> បញ្ជីដឹកជញ្ជូនសិស្ស <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-pen-to-square"></i> បញ្ជីសម្ភារៈ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-award"></i> វិញ្ញាបនបត្រ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-box-open"></i> គ្រប់គ្រងការបញ្ជាទិញ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-cart-shopping"></i> ការទិញទំនិញ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li><a href="#"><i class="fa-solid fa-list"></i> បញ្ជីឱសថ <i class="fa-solid fa-chevron-right arrow"></i></a></li>
+            <li class="report-menu"><a href="#"><i class="fa-solid fa-chart-bar"></i> របាយការណ៍</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="header">
+            <h2>ប្រព័ន្ធគ្រប់គ្រងសាលារៀន</h2>
+        </div>
+        <div class="content">
+            <p>សូមជ្រើសរើស Menu ខាងឆ្វេងដើម្បីគ្រប់គ្រងទិន្នន័យ។</p>
+        </div>
+    </div>
+
+</body>
+</html>
