@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>គ្រូប្រឹក្សាអាជីព និងជំនាញវៃឆ្លាត - Career & Major Advisor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Moul&family=Siemreap&family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        .khmer-moul {
+            font-family: 'Moul', 'Khmer OS Muol Light', cursive;
+        }
+        .khmer-siemreap {
+            font-family: 'Siemreap', 'Khmer OS Siemreap', sans-serif;
+        }
+        .kantumruy {
+            font-family: 'Kantumruy Pro', sans-serif;
+        }
+        
+        /* Premium A4 Preview Styling */
+        .a4-page {
+            width: 21cm;
+            min-height: 29.7cm;
+            padding: 2cm 1.8cm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            color: #1e293b;
+            box-sizing: border-box;
+            position: relative;
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* Beautiful frame inside A4 */
+        .a4-frame {
+            border: 2px double #a1a1aa;
+            padding: 1.5cm 1.2cm;
+            min-height: 25.7cm;
+            position: relative;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        /* Pulse Animation for Advisor Avatar */
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .advisor-pulse {
+            animation: subtlePulse 4s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen kantumruy text-slate-800">
+
+    <!-- Header Navigation -->
+    <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-violet-800 text-white shadow-lg sticky top-0 z-50 px-4 py-3.5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/10 p-2.5 rounded-xl border border-white/20 advisor-pulse">
+                    <i class="fa-solid fa-user-tie text-yellow-300 text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-md md:text-lg font-bold khmer-moul text-yellow-300 leading-relaxed">គ្រូប្រឹក្សាអាជីព និងជំនាញវៃឆ្លាត</h1>
+                    <p class="text-xs text-blue-200 font-light khmer-siemreap">តម្រង់ទិសដៅជីវិត ជ្រើសរើសជំនាញត្រូវ និងកសាងអនាគតជោគជ័យ</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2">
+                <div class="flex bg-white/10 p-1 rounded-xl border border-white/20">
+                    <button onclick="switchTab('test')" id="tabTestBtn" class="px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-yellow-400 text-slate-900 shadow">
+                        <i class="fa-solid fa-clipboard-question mr-1"></i> តេស្ត RIASEC
+                    </button>
+                    <button onclick="switchTab('explorer')" id="tabExpBtn" class="px-3.5 py-2 rounded-lg text-xs font-bold transition-all text-white hover:bg-white/10">
+                        <i class="fa-solid fa-compass mr-1"></i> ស្វែងយល់ជំនាញ
+                    </button>
+                    <button onclick="switchTab('builder')" id="tabBuildBtn" class="px-3.5 py-2 rounded-lg text-xs font-bold transition-all text-white hover:bg-white/10">
+                        <i class="fa-solid fa-map-location-dot mr-1"></i> រៀបចំផែនទីសិក្សា
+                    </button>
+                </div>
+                
+                <button onclick="downloadRoadmap()" class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition duration-200 shadow-lg shadow-emerald-900/20">
+                    <i class="fa-solid fa-file-pdf text-sm"></i>
+                    <span>បោះពុម្ព / ទាញយក</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Sidebar: Interaction Panel -->
+        <aside class="lg:col-span-5 space-y-6">
+            
+            <!-- Advisor Profile Card -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 bg-gradient-to-br from-white to-blue-50/30">
+                <div class="relative">
+                    <img src="https://api.dicebear.com/7.x/bottts/svg?seed=counselor&backgroundColor=c0aede" alt="គ្រូប្រឹក្សា" class="w-16 h-16 rounded-2xl bg-indigo-100 p-1 border-2 border-indigo-400">
+                    <span class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm khmer-moul text-indigo-900">លោកគ្រូ សុខជា (គូ្រប្រឹក្សាផ្ទាល់ខ្លួន)</h3>
+                    <p class="text-xs text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full inline-block mt-1">ជំនាញវិភាគចិត្តសាស្ត្រ និងការងារ</p>
+                    <p class="text-[11px] text-slate-500 mt-1">"ខ្ញុំត្រៀមខ្លួនជាស្រេច ដើម្បីជួយប្អូនស្វែងរកជំនាញដ៏ត្រឹមត្រូវបំផុត!"</p>
+                </div>
+            </div>
+
+            <!-- TAB 1: RIASEC TEST CONTROLS -->
+            <div id="testControls" class="space-y-5">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-bold flex items-center gap-2 text-indigo-900 khmer-moul">
+                            <i class="fa-solid fa-circle-play text-yellow-500"></i>
+                            <span>តេស្តបុគ្គលិកលក្ខណៈ RIASEC</span>
+                        </h3>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded" id="progressText">សំណួរ ១/៦</span>
+                    </div>
+                    
+                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">សូមឆ្លើយសំណួរទាំង៦ខាងក្រោម ដោយជ្រើសរើសយកកម្រិតដែលត្រូវនឹងខ្លួនប្អូនបំផុត ដើម្បីវិភាគរកប្រភេទបុគ្គលិកលក្ខណៈអាជីព។</p>
+                    
+                    <!-- Interactive Quiz Area -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-4">
+                        <div id="questionContainer">
+                            <h4 id="questionTitle" class="text-xs font-bold text-slate-800 mb-3 leading-relaxed"></h4>
+                            <div class="space-y-2" id="optionsContainer">
+                                <!-- Option buttons will render here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+                        <div id="progressBar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 16.66%;"></div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button onclick="prevQuestion()" id="prevBtn" class="bg-slate-200 hover:bg-slate-300 active:scale-95 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition disabled:opacity-50" disabled>
+                            <i class="fa-solid fa-arrow-left mr-1"></i> ថយក្រោយ
+                        </button>
+                        <button onclick="resetTest()" class="text-xs text-red-500 hover:underline font-bold">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> ធ្វើតេស្តឡើងវិញ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: EXPLORER CONTROLS -->
+            <div id="explorerControls" class="space-y-5 hidden">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2 text-indigo-900 khmer-moul">
+                        <i class="fa-solid fa-search"></i>
+                        <span>រុករកជំនាញ និងឱកាសការងារ</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4">ចុចលើវិស័យជំនាញខាងក្រោម ដើម្បីស្វែងយល់លម្អិត និងបោះបញ្ចូលទៅក្នុងផែនទីសន្លឹក A4៖</p>
+                    
+                    <div class="grid grid-cols-1 gap-2.5 max-h-[350px] overflow-y-auto pr-1 custom-scrollbar" id="majorList">
+                        <!-- Dynamic major list cards -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: ROADMAP BUILDER CONTROLS -->
+            <div id="builderControls" class="space-y-5 hidden">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold mb-3 flex items-center gap-2 text-indigo-900 khmer-moul">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>កែសម្រួលព័ត៌មានផ្ទាល់ខ្លួន</span>
+                    </h3>
+                    <div class="space-y-3.5">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 mb-1">ឈ្មោះសិស្ស</label>
+                            <input type="text" id="studentName" value="ឈិត សុធារិទ្ធ" oninput="updateRoadmap()" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 mb-1">កម្រិតថ្នាក់</label>
+                                <input type="text" id="studentGrade" value="ថ្នាក់ទី១២ (វិទ្យាសាស្ត្រពិត)" oninput="updateRoadmap()" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 mb-1">សាលារៀន</label>
+                                <input type="text" id="studentSchool" value="វិទ្យាល័យព្រះស៊ីសុវត្ថិ" oninput="updateRoadmap()" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 mb-1">មុខវិជ្ជាចូលចិត្ត</label>
+                                <input type="text" id="favSubjects" value="គណិតវិទ្យា, រូបវិទ្យា, អង់គ្លេស" oninput="updateRoadmap()" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 mb-1">ជំនាញចង់រៀន</label>
+                                <input type="text" id="dreamMajor" value="វិទ្យាសាស្ត្រកុំព្យូទ័រ" oninput="updateRoadmap()" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 mb-1">ទិសដៅអាជីពនាពេលអនាគត</label>
+                            <input type="text" id="dreamCareer" value="វិស្វករកម្មវិធី (Software Engineer)" oninput="updateRoadmap()" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips Box -->
+            <div class="bg-indigo-50 p-4.5 rounded-2xl border border-indigo-100 text-xs text-indigo-900">
+                <h4 class="font-bold flex items-center gap-1.5 mb-2 text-indigo-950">
+                    <i class="fa-solid fa-lightbulb text-yellow-500"></i>
+                    <span>គន្លឹះពីលោកគ្រូប្រឹក្សា៖</span>
+                </h4>
+                <p class="leading-relaxed font-light khmer-siemreap text-[11px]">
+                    ការធ្វើតេស្តបុគ្គលិកលក្ខណៈ <span class="font-bold">RIASEC</span> ជួយឱ្យប្អូនដឹងពីចំណុចខ្លាំងរបស់ខ្លួនឯង។ នៅពេលប្អូនឆ្លើយសំណួររួច ប្រព័ន្ធនឹងវាយតម្លៃដោយស្វ័យប្រវត្ត ហើយប្អូនអាចរៀបចំផែនការសិក្សា ព្រមទាំងទាញយកវាទុកជាជំនួយស្មារតីបាន!
+                </p>
+            </div>
+
+        </aside>
+
+        <!-- Right Side: A4 Page Simulation / Live Preview -->
+        <main class="lg:col-span-7">
+            <div class="mb-3.5 flex justify-between items-center px-2">
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-eye text-indigo-600"></i>
+                    <span>សន្លឹកលទ្ធផល និងផែនទីតម្រង់ទិសអាជីព (A4 Preview)</span>
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="text-[10px] text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-1 rounded-lg font-bold">Standard A4</span>
+                </div>
+            </div>
+            
+            <!-- A4 Document Simulation Wrapper -->
+            <div class="overflow-x-auto rounded-2xl shadow-xl border border-slate-200 bg-slate-200 p-4 max-h-[82vh] custom-scrollbar overflow-y-auto">
+                <div id="a4Content" class="a4-page khmer-siemreap text-justify">
+                    <div class="a4-frame">
+                        <!-- A4 Header Decor -->
+                        <div class="text-center space-y-1 mb-6 border-b border-slate-300 pb-5">
+                            <p class="khmer-moul text-xs tracking-widest text-slate-900">ព្រះរាជាណាចក្រកម្ពុជា</p>
+                            <p class="khmer-moul text-[10px] text-slate-800">ជាតិ សាសនា ព្រះមហាក្សត្រ</p>
+                            <div class="flex justify-center items-center gap-1 py-1">
+                                <span class="h-[1px] w-8 bg-slate-400"></span>
+                                <span class="h-[1px] w-2 bg-slate-400"></span>
+                                <span class="h-[1px] w-8 bg-slate-400"></span>
+                            </div>
+                            <h2 class="khmer-moul text-sm text-indigo-900 mt-2">ផែនទីតម្រង់ទិសអាជីព និងជំនាញសិក្សាថ្នាក់ឧត្តម</h2>
+                            <p class="text-[10px] text-slate-500 italic">ចេញដោយ៖ ប្រព័ន្ធគ្រប់គ្រងការប្រឹក្សាវៃឆ្លាត (Smart Career & Academic Advisor)</p>
+                        </div>
+
+                        <!-- Grid Info -->
+                        <div class="grid grid-cols-2 gap-4 text-xs mb-6 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <div class="space-y-1.5">
+                                <p><strong class="font-bold">ឈ្មោះសិស្ស៖</strong> <span id="lblStudentName" class="text-indigo-900 font-bold">ឈិត សុធារិទ្ធ</span></p>
+                                <p><strong class="font-bold">កម្រិតថ្នាក់៖</strong> <span id="lblStudentGrade">ថ្នាក់ទី១២ (វិទ្យាសាស្ត្រពិត)</span></p>
+                                <p><strong class="font-bold">សាលារៀន៖</strong> <span id="lblStudentSchool">វិទ្យាល័យព្រះស៊ីសុវត្ថិ</span></p>
+                            </div>
+                            <div class="space-y-1.5 border-l border-slate-200 pl-4">
+                                <p><strong class="font-bold">កាលបរិច្ឆេទ៖</strong> <span id="lblDate">១៦ មិថុនា ២០២៦</span></p>
+                                <p><strong class="font-bold">មុខវិជ្ជាចំណូលចិត្ត៖</strong> <span id="lblFavSubjects" class="text-emerald-700 font-bold">គណិតវិទ្យា, រូបវិទ្យា, អង់គ្លេស</span></p>
+                                <p><strong class="font-bold">លេខកូដសន្លឹក៖</strong> <span class="font-mono text-slate-500">SCAA-2026-9081</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Section 1: RIASEC Test Result -->
+                        <div class="mb-5 space-y-2">
+                            <h3 class="text-xs font-bold bg-indigo-900 text-white px-3 py-1.5 rounded-md flex items-center justify-between">
+                                <span>I. លទ្ធផលវាយតម្លៃបុគ្គលិកលក្ខណៈ (RIASEC Profile)</span>
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </h3>
+                            <div class="border border-slate-200 rounded-lg p-3 grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
+                                <div class="md:col-span-4 text-center border-r border-slate-100 pr-2">
+                                    <span class="text-3xl font-bold text-indigo-800" id="riasecScoreType">S</span>
+                                    <p class="font-bold text-xs text-indigo-900 mt-1" id="riasecTypeName">Social (សង្គមនិយម)</p>
+                                    <p class="text-[10px] text-slate-400 italic">ប្រភេទបុគ្គលិកលក្ខណៈចម្បង</p>
+                                </div>
+                                <div class="md:col-span-8 space-y-1.5 text-xs text-slate-600">
+                                    <p class="font-bold text-slate-800">ចរិតលក្ខណៈទូទៅ៖</p>
+                                    <p id="riasecDescription" class="leading-relaxed text-[11px]">
+                                        ចូលចិត្តជួយអ្នកដទៃ ចូលចិត្តការងារបង្រៀន ចែករំលែក ពិភាក្សា និងធ្វើការងារជាក្រុម។ មានភាពរួសរាយរាក់ទាក់ និងយកចិត្តទុកដាក់ខ្ពស់ចំពោះមនុស្សជុំវិញខ្លួន។
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Selected Major Details -->
+                        <div class="mb-5 space-y-2">
+                            <h3 class="text-xs font-bold bg-indigo-900 text-white px-3 py-1.5 rounded-md flex items-center justify-between">
+                                <span>II. ព័ត៌មានលម្អិតពីជំនាញសិក្សាដែលបានជ្រើសរើស</span>
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </h3>
+                            <div class="border border-slate-200 rounded-lg p-3 space-y-2 text-xs">
+                                <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
+                                    <h4 class="font-bold text-indigo-900" id="lblMajorTitle">ជំនាញ៖ វិទ្យាសាស្ត្រកុំព្យូទ័រ (Computer Science)</h4>
+                                    <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] px-2 py-0.5 rounded font-bold" id="lblMajorCategory">វិស័យបច្ចេកវិទ្យា និងព័ត៌មានវិទ្យា</span>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] leading-relaxed text-slate-600">
+                                    <div class="space-y-1.5">
+                                        <p><strong class="font-bold text-slate-800"><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> អំពីជំនាញ៖</strong> <span id="lblMajorDesc">សិក្សាអំពីការសរសេរកម្មវិធីកុំព្យូទ័រ ការរចនាប្រព័ន្ធទិន្នន័យ ក្បួនដោះស្រាយ និងបច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត (AI)។</span></p>
+                                        <p><strong class="font-bold text-slate-800"><i class="fa-solid fa-briefcase text-blue-500 mr-1"></i> អាជីពការងារ៖</strong> <span id="lblMajorJobs">វិស្វករកម្មវិធី, អ្នករចនា App, អ្នកគ្រប់គ្រងទិន្នន័យ, Cyber Security។</span></p>
+                                    </div>
+                                    <div class="space-y-1.5 border-l border-slate-100 pl-3">
+                                        <p><strong class="font-bold text-slate-800"><i class="fa-solid fa-university text-emerald-600 mr-1"></i> គ្រឹះស្ថានសិក្សាល្បីៗ៖</strong> <span id="lblMajorSchools" class="text-indigo-900">CADT, RUPP, ITC, Norton, Kirirom។</span></p>
+                                        <p><strong class="font-bold text-slate-800"><i class="fa-solid fa-award text-yellow-600 mr-1"></i> ជំនាញទន់ចាំបាច់៖</strong> <span id="lblMajorSoftSkills">ការដោះស្រាយបញ្ហា, គំនិតច្នៃប្រឌិត, ការធ្វើការជាក្រុម។</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Professional Advice & Roadmap -->
+                        <div class="mb-6 space-y-2">
+                            <h3 class="text-xs font-bold bg-indigo-900 text-white px-3 py-1.5 rounded-md flex items-center justify-between">
+                                <span>III. យោបល់ណែនាំ និងការរៀបចំកសាងអនាគត</span>
+                                <i class="fa-solid fa-route"></i>
+                            </h3>
+                            <div class="border border-slate-200 rounded-lg p-3 text-xs space-y-3 leading-relaxed text-slate-600">
+                                <p id="lblAdvisorAdvice">
+                                    ផ្អែកលើបុគ្គលិកលក្ខណៈ <strong class="text-indigo-800">សង្គមនិយម (Social)</strong> និងគោលដៅ <strong class="text-indigo-800">វិទ្យាសាស្ត្រកុំព្យូទ័រ</strong> លោកគ្រូសូមណែនាំឱ្យប្អូនផ្តោតលើការអភិវឌ្ឍន៍ជំនាញបច្ចេកទេស ស្របពេលជាមួយគ្នានឹងការជួយបណ្តុះបណ្តាល ឬធ្វើការងារជាក្រុម។ ការធ្វើការងារជាអ្នកសម្របសម្រួលបច្ចេកវិទ្យា ឬគ្រូបង្រៀនព័ត៌មានវិទ្យា គឺជាចំណុចប្រសព្វដ៏ល្អបំផុតសម្រាប់ប្អូន។
+                                </p>
+                                <div class="grid grid-cols-3 gap-2 text-[10px] text-center pt-2">
+                                    <div class="bg-indigo-50/50 p-2 rounded border border-indigo-100">
+                                        <div class="font-bold text-indigo-900 mb-0.5">ជំហានទី១ (ត្រៀមខ្លួន)</div>
+                                        <div class="text-slate-500">ពង្រឹងភាសាអង់គ្លេស និងគណិតវិទ្យាវិទ្យាល័យឱ្យបានរឹងមាំ។</div>
+                                    </div>
+                                    <div class="bg-indigo-50/50 p-2 rounded border border-indigo-100">
+                                        <div class="font-bold text-indigo-900 mb-0.5">ជំហានទី២ (ឆ្នាំសិក្សាដំបូង)</div>
+                                        <div class="text-slate-500">ស្វែងយល់ពីភាសាកូដមូលដ្ឋាន (C++, Python) និងបង្កើតបណ្តាញទំនាក់ទំនង។</div>
+                                    </div>
+                                    <div class="bg-indigo-50/50 p-2 rounded border border-indigo-100">
+                                        <div class="font-bold text-indigo-900 mb-0.5">ជំហានទី៣ (អនុវត្តជាក់ស្តែង)</div>
+                                        <div class="text-slate-500">ចូលរួមក្នុងគម្រោងការងារសង្គមបច្ចេកវិទ្យា និងចុះធ្វើកម្មសិក្សា (Internship)។</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Signatures footer -->
+                        <div class="flex justify-between items-end text-xs pt-4 border-t border-dashed border-slate-300">
+                            <div class="text-center space-y-1">
+                                <p class="text-[10px] text-slate-500">ស្នាមមេដៃ / ហត្ថលេខាសិស្ស</p>
+                                <div class="h-12"></div>
+                                <p class="font-bold text-slate-800" id="lblSigStudentName">ឈិត សុធារិទ្ធ</p>
+                            </div>
+                            <div class="text-center space-y-1">
+                                <p class="text-[10px] text-slate-500">លោកគ្រូប្រឹក្សាយោបល់អាជីព</p>
+                                <div class="h-10 flex justify-center items-center">
+                                    <span class="khmer-moul text-[11px] text-red-600 border border-red-600 px-2 py-0.5 rounded rotate-3 font-light tracking-wide bg-red-50/20">បានពិនិត្យ និងយល់ព្រម</span>
+                                </div>
+                                <p class="font-bold text-slate-800">គ្រូប្រឹក្សា សុខជា</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-xl translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 z-50">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage" class="text-xs font-bold">ជោគជ័យ!</span>
+    </div>
+
+    <script>
+        // Tab switching logic
+        let activeTab = 'test';
+
+        function switchTab(tab) {
+            activeTab = tab;
+            
+            // Manage UI Buttons
+            const btnTest = document.getElementById('tabTestBtn');
+            const btnExp = document.getElementById('tabExpBtn');
+            const btnBuild = document.getElementById('tabBuildBtn');
+            
+            const ctrlTest = document.getElementById('testControls');
+            const ctrlExp = document.getElementById('explorerControls');
+            const ctrlBuild = document.getElementById('builderControls');
+
+            // Reset classes
+            [btnTest, btnExp, btnBuild].forEach(btn => {
+                btn.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all text-white hover:bg-white/10";
+            });
+            [ctrlTest, ctrlExp, ctrlBuild].forEach(ctrl => {
+                ctrl.classList.add('hidden');
+            });
+
+            if(tab === 'test') {
+                btnTest.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-yellow-400 text-slate-900 shadow";
+                ctrlTest.classList.remove('hidden');
+                document.getElementById('previewTitle').innerText = "សន្លឹកលទ្ធផល និងផែនទីតម្រង់ទិសអាជីព (A4 Preview)";
+            } else if (tab === 'explorer') {
+                btnExp.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-yellow-400 text-slate-900 shadow";
+                ctrlExp.classList.remove('hidden');
+                document.getElementById('previewTitle').innerText = "ទិដ្ឋភាពប្រព័ន្ធរុករកជំនាញ និងការងារ";
+            } else if (tab === 'builder') {
+                btnBuild.className = "px-3.5 py-2 rounded-lg text-xs font-bold transition-all bg-yellow-400 text-slate-900 shadow";
+                ctrlBuild.classList.remove('hidden');
+                document.getElementById('previewTitle').innerText = "កែសម្រួលគម្រោងសិក្សាផ្ទាល់ខ្លួន";
+            }
+        }
+
+        // Database
+        const db = {
+            riasec: {
+                R: { name: "Realistic (និយមការអនុវត្តជាក់ស្តែង)", short: "R", desc: "ចូលចិត្តធ្វើការងារជាមួយឧបករណ៍ ម៉ាស៊ីន វត្ថុជាក់ស្តែង និងការងារក្រៅផ្ទះ។ មានជំនាញខាងបច្ចេកទេស និងការដោះស្រាយបញ្ហារូបវន្ត។", advice: "ប្អូនស័ក្តិសមបំផុតជាមួយការងារវិស្វកម្ម ស្ថាបត្យកម្ម កសិកម្មទំនើប ឬបច្ចេកវិទ្យាឧស្សាហកម្ម។ គួរផ្តោតលើការអនុវត្តផ្ទាល់ឱ្យបានច្រើន។" },
+                I: { name: "Investigative (និយមការស្រាវជ្រាវ)", short: "I", desc: "ចូលចិត្តការស្រាវជ្រាវ ការវិភាគ ការដោះស្រាយបញ្ហាគណិតវិទ្យា និងវិទ្យាសាស្ត្រដ៏ស្មុគស្មាញ។ មានការគិតពិចារណាជ្រៅជ្រះ។", advice: "ការរៀនជំនាញវិទ្យាសាស្ត្រទិន្នន័យ (Data Science) វេជ្ជសាស្ត្រ ឬការស្រាវជ្រាវបច្ចេកវិទ្យាព័ត៌មាន (AI Research) ពិតជាត្រូវនឹងសមត្ថភាពប្អូន។" },
+                A: { name: "Artistic (និយមសិល្បៈ និងភាពច្នៃប្រឌិត)", short: "A", desc: "មានគំនិតច្នៃប្រឌិតខ្ពស់ ចូលចិត្តការរចនា សរសេរកូដច្នៃប្រឌិត សិល្បៈ តន្ត្រី ឬការងារដែលមិនមានទម្រង់ចងភ្ជាប់តឹងរ៉ឹងពេក។", advice: "ជំនាញប្រព័ន្ធផ្សព្វផ្សាយឌីជីថល រចនាក្រាហ្វិក (UI/UX Design) ឬស្ថាបត្យកម្មឌីជីថល នឹងអនុញ្ញាតឱ្យប្អូនបញ្ចេញថាមពលច្នៃប្រឌិតរបស់ប្អូនបានពេញទំហឹង។" },
+                S: { name: "Social (សង្គមនិយម)", short: "S", desc: "ចូលចិត្តជួយអ្នកដទៃ ចូលចិត្តការងារបង្រៀន ចែករំលែក ពិភាក្សា និងធ្វើការងារជាក្រុម។ មានភាពរួសរាយរាក់ទាក់ និងយកចិត្តទុកដាក់ចំពោះមនុស្សជុំវិញ។", advice: "ការងារជាអ្នកគ្រប់គ្រងទំនាក់ទំនង គ្រូបង្រៀនបច្ចេកវិទ្យា ឬអ្នកឯកទេសទំនាក់ទំនងសាធារណៈ (PR) នឹងធ្វើឱ្យប្អូនសប្បាយចិត្ត និងជោគជ័យបំផុត។" },
+                E: { name: "Enterprising (និយមការច្នៃប្រឌិតអាជីវកម្ម)", short: "E", desc: "ចូលចិត្តដឹកនាំការងារ បញ្ចុះបញ្ចូលអ្នកដទៃ មានភាពក្លាហានក្នុងការសម្រេចចិត្ត និងចូលចិត្តវិស័យជំនួញ ឬការគ្រប់គ្រងគម្រោង។", advice: "ប្អូនមានអំណោយផលខាងជំនួញបច្ចេកវិទ្យា (Tech-Startup) គ្រប់គ្រងគម្រោង (Project Management) ឬការវិនិយោគ។ គួរអភិវឌ្ឍសមត្ថភាពដឹកនាំបន្ថែម។" },
+                C: { name: "Conventional (និយមបែបផែន និងរៀបរយ)", short: "C", desc: "ចូលចិត្តការងាររៀបចំឯកសារ ទិន្នន័យច្បាស់លាស់ ធ្វើការតាមច្បាប់លំដាប់លំដោយ និងមានរបៀបរៀបរយខ្ពស់បំផុត។", advice: "ជំនាញគណនេយ្យហិរញ្ញវត្ថុ ការវិភាគស្ថិតិ ឬសន្តិសុខទិន្នន័យព័ត៌មានវិទ្យា (Cybersecurity Auditing) ពិតជាស័ក្តិសមនឹងចរិតលក្ខណៈផ្ចិតផ្ចង់របស់ប្អូន។" }
+            },
+            majors: [
+                {
+                    id: "computer_science",
+                    title: "វិទ្យាសាស្ត្រកុំព្យូទ័រ (Computer Science)",
+                    category: "បច្ចេកវិទ្យា និងព័ត៌មានវិទ្យា",
+                    desc: "សិក្សាអំពីការសរសេរកម្មវិធីកុំព្យូទ័រ ការរចនាប្រព័ន្ធទិន្នន័យ ក្បួនដោះស្រាយ និងបច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត (AI)។",
+                    jobs: "វិស្វករកម្មវិធី (Software Engineer), អ្នករចនា App, Cyber Security, AI Engineer",
+                    schools: "CADT, RUPP, ITC, Norton, Kirirom, AUPP",
+                    softSkills: "ការដោះស្រាយបញ្ហា, គំនិតវិភាគស្មុគស្មាញ, ស្វ័យសិក្សា",
+                    riasecType: "I"
+                },
+                {
+                    id: "digital_marketing",
+                    title: "ទីផ្សារឌីជីថល (Digital Marketing)",
+                    category: "ពាណិជ្ជកម្ម និងគ្រប់គ្រង",
+                    desc: "សិក្សាពីការវិភាគទីផ្សារអនឡាញ ការផ្សព្វផ្សាយលើបណ្តាញសង្គម ការបង្កើតមាតិកាទាក់ទាញ (Content Creation) និងយុទ្ធសាស្ត្រលក់។",
+                    jobs: "Digital Marketer, Content Specialist, SEO Manager, PR Director",
+                    schools: "NUM, RULE, RUPP, CamEd, Limkokwing",
+                    softSkills: "ការប្រាស្រ័យទាក់ទង, ការបញ្ចុះបញ្ចូល, គំនិតច្នៃប្រឌិត",
+                    riasecType: "E"
+                },
+                {
+                    id: "architecture",
+                    title: "ស្ថាបត្យកម្ម និងរចនាទីក្រុង (Architecture)",
+                    category: "វិស្វកម្ម និងសំណង់",
+                    desc: "សិក្សាពីការរចនាប្លង់គំនូរអគារ ការរៀបចំហេដ្ឋារចនាសម្ព័ន្ធទីក្រុងប្រកបដោយសោភ័ណភាព និងនិរន្តរភាពបរិស្ថាន។",
+                    jobs: "ស្ថាបត្យករ, អ្នករចនាប្លង់ខាងក្នុង (Interior Designer), អ្នករៀបចំក្រុង",
+                    schools: "ITC, RUFA, Norton, RUPP",
+                    softSkills: "ការគិតបែបរូបវន្ត, គំនិតច្នៃប្រឌិត, ការផ្ចិតផ្ចង់",
+                    riasecType: "A"
+                },
+                {
+                    id: "cyber_security",
+                    title: "សន្តិសុខបច្ចេកវិទ្យាគន្លឹះ (Cyber Security)",
+                    category: "បច្ចេកវិទ្យា និងព័ត៌មានវិទ្យា",
+                    desc: "សិក្សាអំពីការការពារប្រព័ន្ធកុំព្យូទ័រ និងទិន្នន័យពីការវាយប្រហាររបស់ Hacker ការគ្រប់គ្រងប្រព័ន្ធសុវត្ថិភាពបណ្តាញព័ត៌មានវិទ្យា។",
+                    jobs: "Cybersecurity Analyst, Ethical Hacker, Security Consultant",
+                    schools: "CADT, RUPP, ITC, Norton",
+                    softSkills: "ការយកចិត្តទុកដាក់លើលម្អិត, ការគិតស៊ីជម្រៅ, ក្រមសីលធម៌",
+                    riasecType: "C"
+                },
+                {
+                    id: "civil_engineering",
+                    title: "វិស្វកម្មសំណង់ស៊ីវិល (Civil Engineering)",
+                    category: "វិស្វកម្ម និងសំណង់",
+                    desc: "សិក្សាអំពីការគណនាប្លង់គ្រឿងបង្គុំសំណង់ ការគ្រប់គ្រងការដ្ឋានសាងសង់ស្ពាន ថ្នល់ និងអគារធំៗ។",
+                    jobs: "វិស្វករការដ្ឋាន, អ្នកគ្រប់គ្រងគម្រោងសំណង់, អ្នករចនាគ្រឿងបង្គុំ",
+                    schools: "ITC, RUPP, Norton, UP",
+                    softSkills: "ការងារជាក្រុម, ការដោះស្រាយបញ្ហាជាក់ស្តែង, ភាពអត់ធ្មត់",
+                    riasecType: "R"
+                },
+                {
+                    id: "public_relations",
+                    title: "ទំនាក់ទំនងអន្តរជាតិ និងសាធារណៈ (International Relations)",
+                    category: "សង្គមសាស្ត្រ និងមនុស្សសាស្ត្រ",
+                    desc: "សិក្សាពីគោលនយោបាយការបរទេស ច្បាប់អន្តរជាតិ និងការប្រាស្រ័យទាក់ទងដោះស្រាយទំនាស់រវាងស្ថាប័ន និងប្រទេស។",
+                    jobs: "មន្ត្រីការទូត, អ្នកសម្របសម្រួលគម្រោងអន្តរជាតិ, មន្ត្រីអង្គការក្រៅរដ្ឋាភិបាល",
+                    schools: "RUPP (IFL), UC, RULE, Paññāsāstra",
+                    softSkills: "ការចរចា, ការយល់ចិត្តអ្នកដទៃ, ភាពជាអ្នកដឹកនាំ",
+                    riasecType: "S"
+                }
+            ],
+            questions: [
+                { id: 1, text: "១. នៅពេលទំនេរ តើប្អូនចូលចិត្តធ្វើអ្វីជាងគេ?", options: [
+                    { text: "ជួសជុលឧបករណ៍ វត្ថុប្រើប្រាស់ ឬដាំដំណាំ", type: "R" },
+                    { text: "អានសៀវភៅវិទ្យាសាស្ត្រ ឬដោះស្រាយល្បែងប្រាជ្ញា", type: "I" },
+                    { text: "គូររូប រចនា ឬបង្កើតមាតិកាច្នៃប្រឌិត", type: "A" },
+                    { text: "និយាយលេង និងពិភាក្សាជួយដោះស្រាយបញ្ហាឱ្យមិត្តភក្តិ", type: "S" }
+                ]},
+                { id: 2, text: "២. ប្រសិនបើត្រូវធ្វើគម្រោងមួយ តើប្អូនចង់បានតួនាទីណា?", options: [
+                    { text: "អ្នកដឹកនាំក្រុម និងបញ្ចុះបញ្ចូលដៃគូសហការ", type: "E" },
+                    { text: "អ្នករៀបចំរបាយការណ៍ និងគ្រប់គ្រងទិន្នន័យឱ្យមានរបៀប", type: "C" },
+                    { text: "អ្នកស្រាវជ្រាវប្រមូលព័ត៌មានលម្អិត", type: "I" },
+                    { text: "អ្នកឌីហ្សាញ ឬរចនារូបភាពឱ្យគម្រោងស្អាតទាក់ទាញ", type: "A" }
+                ]},
+                { id: 3, text: "៣. តើមុខវិជ្ជាណាដែលប្អូនគិតថាខ្លួនឯងពូកែ និងចូលចិត្តរៀនជាងគេ?", options: [
+                    { text: "គណិតវិទ្យា ឬ រូបវិទ្យា (ការគិតលេខ និងរូបមន្ត)", type: "I" },
+                    { text: "អក្សរសាស្ត្រខ្មែរ ឬ ប្រវត្តិវិទ្យា (ការសរសេរ និងវិភាគសង្គម)", type: "S" },
+                    { text: "គំនូរ ឬ បច្ចេកវិទ្យា (ការច្នៃប្រឌិត និងការបង្កើតថ្មី)", type: "A" },
+                    { text: "ការងាររដ្ឋបាល និងកិច្ចការគណនេយ្យ", type: "C" }
+                ]},
+                { id: 4, text: "៤. តើបរិយាកាសការងារបែបណាដែលប្អូនប្រាថ្នាចង់បាន?", options: [
+                    { text: "ការដ្ឋានជាក់ស្តែង ឬ បន្ទប់ពិសោធន៍អនុវត្តផ្ទាល់", type: "R" },
+                    { text: "ការិយាល័យទំនើប មានលំដាប់លំដោយការងារច្បាស់លាស់", type: "C" },
+                    { text: "កន្លែងដែលពោរពេញដោយភាពច្នៃប្រឌិត មិនមានការបង្ខិតបង្ខំ", type: "A" },
+                    { text: "ការងារដែលបានចុះជួបមនុស្សច្រើន និងផ្តល់ជំនួយសង្គម", type: "S" }
+                ]},
+                { id: 5, text: "៥. តើគោលដៅជីវិតចម្បងរបស់ប្អូនគឺអ្វី?", options: [
+                    { text: "ក្លាយជាសហគ្រិន បង្កើតអាជីវកម្មផ្ទាល់ខ្លួន និងមានឥទ្ធិពល", type: "E" },
+                    { text: "ក្លាយជាអ្នកបច្ចេកទេសជំនាញ ឬអ្នកស្រាវជ្រាវរករបកគំហើញថ្មី", type: "I" },
+                    { text: "បង្កើតស្នាដៃសិល្បៈ ឬប្រព័ន្ធបច្ចេកវិទ្យាដ៏អស្ចារ្យជារបស់ខ្លួន", type: "A" },
+                    { text: "ជួយឱ្យមនុស្សជាច្រើនមានការអប់រំ និងជីវភាពល្អប្រសើរឡើង", type: "S" }
+                ]},
+                { id: 6, text: "៦. តើមិត្តភក្តិតែងតែសរសើរដឹងគុណប្អូនលើចំណុចណា?", options: [
+                    { text: "ភាពស្មោះត្រង់ ហ្មត់ចត់ និងការរៀបចំទុកដាក់បានល្អ", type: "C" },
+                    { text: "ការចេះស្តាប់ និងយល់ចិត្ត ព្រមទាំងផ្តល់កម្លាំងចិត្តល្អៗ", type: "S" },
+                    { text: "ភាពជាអ្នកដឹកនាំ និងការជួយឱ្យក្រុមទទួលបានជ័យជម្នះ", type: "E" },
+                    { text: "ភាពវៃឆ្លាតក្នុងការដោះស្រាយលំហាត់ពិបាកៗ", type: "I" }
+                ]}
+            ]
+        };
+
+        // State variables
+        let currentQuestionIndex = 0;
+        let testScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+        let selectedMajor = db.majors[0]; // Default Computer Science
+        let userAnswers = [];
+
+        // App Initializations
+        window.onload = function() {
+            renderQuestion();
+            renderMajorList();
+            updateRoadmap();
+            
+            // Set current date on preview sheet
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('lblDate').innerText = today.toLocaleDateString('km-KH', options);
+        };
+
+        // Render RIASEC quiz question
+        function renderQuestion() {
+            if(currentQuestionIndex >= db.questions.length) {
+                evaluateTestResult();
+                return;
+            }
+
+            const q = db.questions[currentQuestionIndex];
+            document.getElementById('progressText').innerText = `សំណួរ ${currentQuestionIndex + 1}/${db.questions.length}`;
+            document.getElementById('progressBar').style.width = `${((currentQuestionIndex + 1) / db.questions.length) * 100}%`;
+            document.getElementById('questionTitle').innerText = q.text;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 transition text-xs flex items-start gap-2.5 bg-white";
+                btn.innerHTML = `<span class="bg-indigo-100 text-indigo-800 text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold shrink-0 mt-0.5"><i class="fa-solid fa-check text-[8px]"></i></span> <span>${opt.text}</span>`;
+                btn.onclick = () => selectOption(opt.type);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+        }
+
+        function selectOption(type) {
+            userAnswers[currentQuestionIndex] = type;
+            currentQuestionIndex++;
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if(currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function resetTest() {
+            currentQuestionIndex = 0;
+            testScores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+            userAnswers = [];
+            renderQuestion();
+            showToast("បានសម្អាត និងចាប់ផ្តើមធ្វើតេស្តឡើងវិញ!", "success");
+        }
+
+        function evaluateTestResult() {
+            // Calculate scores
+            const scores = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+            userAnswers.forEach(ans => {
+                if(scores[ans] !== undefined) scores[ans]++;
+            });
+
+            // Find max score
+            let maxType = 'S'; // Default fallback
+            let maxScore = -1;
+            for (const [type, score] of Object.entries(scores)) {
+                if(score > maxScore) {
+                    maxScore = score;
+                    maxType = type;
+                }
+            }
+
+            // Update A4 Preview
+            const resultData = db.riasec[maxType];
+            document.getElementById('riasecScoreType').innerText = resultData.short;
+            document.getElementById('riasecTypeName').innerText = resultData.name;
+            document.getElementById('riasecDescription').innerText = resultData.desc;
+
+            // Generate Smart Advice based on RIASEC & current input values
+            const name = document.getElementById('studentName').value;
+            const major = document.getElementById('dreamMajor').value;
+            const adviceText = `ផ្អែកលើបុគ្គលិកលក្ខណៈចម្បងបែប <strong class="text-indigo-800">${resultData.name}</strong> របស់ប្អូន <strong class="text-indigo-900">${name}</strong> និងបំណងប្រាថ្នាចង់សិក្សាជំនាញ <strong class="text-indigo-800">${major}</strong> លោកគ្រូសូមផ្តល់អនុសាសន៍ឱ្យប្អូនពង្រឹងការសិក្សាលើមុខវិជ្ជាស្នូលចាំបាច់។ ${resultData.advice} លើសពីនេះ គួរស្វែងរកឱកាសហាត់ការជាក់ស្តែង និងកសាងបណ្តាញទំនាក់ទំនងជាមួយរៀបច្បងក្នុងវិស័យនេះឱ្យបានលឿនបំផុត។`;
+            
+            document.getElementById('lblAdvisorAdvice').innerHTML = adviceText;
+
+            showToast("ការវិភាគជោគជ័យ! សន្លឹក A4 ត្រូវបានធ្វើបច្ចុប្បន្នភាព។", "success");
+            
+            // Switch view to builder to see details
+            switchTab('builder');
+        }
+
+        // Render Majors in explorer database
+        function renderMajorList() {
+            const container = document.getElementById('majorList');
+            container.innerHTML = '';
+
+            db.majors.forEach(m => {
+                const card = document.createElement('button');
+                card.className = "text-left p-3.5 rounded-xl border border-slate-200 hover:border-violet-500 hover:bg-violet-50/30 transition-all flex flex-col gap-1 w-full bg-white";
+                card.onclick = () => selectMajor(m);
+                card.innerHTML = `
+                    <div class="flex justify-between items-center w-full">
+                        <span class="font-bold text-xs text-slate-800">${m.title}</span>
+                        <span class="bg-indigo-50 text-indigo-700 text-[9px] px-2 py-0.5 rounded-full font-bold border border-indigo-100">${m.category}</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 line-clamp-1 mt-1">${m.desc}</p>
+                    <div class="flex items-center gap-2 mt-1.5 text-[10px] text-slate-400">
+                        <span><i class="fa-solid fa-graduation-cap"></i> ${m.schools.split(',')[0]}...</span>
+                        <span><i class="fa-solid fa-briefcase"></i> ${m.jobs.split(',')[0]}...</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectMajor(major) {
+            selectedMajor = major;
+            
+            // Auto fill builder controls with chosen major data
+            document.getElementById('dreamMajor').value = major.title;
+            document.getElementById('dreamCareer').value = major.jobs.split(',')[0];
+            
+            updateRoadmap();
+            showToast(`បានបញ្ចូលជំនាញ « ${major.title} » ទៅក្នុងសន្លឹកកិច្ចការរួចរាល់!`, "success");
+        }
+
+        // Real-time update from input fields to A4 Preview
+        function updateRoadmap() {
+            const name = document.getElementById('studentName').value || "សិស្សគំរូ";
+            const grade = document.getElementById('studentGrade').value || "ថ្នាក់ទី១២";
+            const school = document.getElementById('studentSchool').value || "វិទ្យាល័យ";
+            const favSub = document.getElementById('favSubjects').value || "គ្មាន";
+            const major = document.getElementById('dreamMajor').value || "គ្មាន";
+            const career = document.getElementById('dreamCareer').value || "គ្មាន";
+
+            // Labels updates
+            document.getElementById('lblStudentName').innerText = name;
+            document.getElementById('lblStudentGrade').innerText = grade;
+            document.getElementById('lblStudentSchool').innerText = school;
+            document.getElementById('lblFavSubjects').innerText = favSub;
+            document.getElementById('lblSigStudentName').innerText = name;
+
+            // Major details updates in Section II
+            document.getElementById('lblMajorTitle').innerText = `ជំនាញ៖ ${major}`;
+            
+            // If the user modified the major, we match it with DB to fetch other information
+            const matched = db.majors.find(m => m.title.includes(major) || major.includes(m.title));
+            if(matched) {
+                document.getElementById('lblMajorCategory').innerText = matched.category;
+                document.getElementById('lblMajorDesc').innerText = matched.desc;
+                document.getElementById('lblMajorJobs').innerText = matched.jobs;
+                document.getElementById('lblMajorSchools').innerText = matched.schools;
+                document.getElementById('lblMajorSoftSkills').innerText = matched.softSkills;
+            } else {
+                // Generative Fallback for custom entries
+                document.getElementById('lblMajorCategory').innerText = "វិស័យសិក្សាឯកទេស";
+                document.getElementById('lblMajorDesc').innerText = `ការសិក្សាស្រាវជ្រាវស៊ីជម្រៅ និងការកសាងសមត្ថភាពជំនាញពាក់ព័ន្ធនឹង ${major}។`;
+                document.getElementById('lblMajorJobs').innerText = `${career} ព្រមទាំងអាជីពប្រហាក់ប្រហែលជាច្រើនទៀត។`;
+                document.getElementById('lblMajorSchools').innerText = "សាកលវិទ្យាល័យរដ្ឋ និងឯកជននានានៅទូទាំងប្រទេស។";
+                document.getElementById('lblMajorSoftSkills').innerText = "ទំនាក់ទំនង, ភាពជាអ្នកដឹកនាំ, វិន័យការងារ";
+            }
+
+            // Update advice dynamically
+            const activeType = document.getElementById('riasecScoreType').innerText;
+            const resultData = db.riasec[activeType] || db.riasec.S;
+            
+            const adviceText = `ផ្អែកលើបុគ្គលិកលក្ខណៈចម្បងបែប <strong class="text-indigo-800">${resultData.name}</strong> របស់ប្អូន <strong class="text-indigo-900">${name}</strong> និងបំណងប្រាថ្នាចង់សិក្សាជំនាញ <strong class="text-indigo-800">${major}</strong> លោកគ្រូសូមផ្តល់អនុសាសន៍ឱ្យប្អូនពង្រឹងការសិក្សាលើមុខវិជ្ជាស្នូលចាំបាច់។ ${resultData.advice} លើសពីនេះ គួរស្វែងរកឱកាសហាត់ការជាក់ស្តែង និងកសាងបណ្តាញទំនាក់ទំនងជាមួយរៀបច្បងក្នុងវិស័យនេះឱ្យបានលឿនបំផុត។`;
+            document.getElementById('lblAdvisorAdvice').innerHTML = adviceText;
+        }
+
+        // Print & Download A4 document simulation
+        function downloadRoadmap() {
+            window.print();
+        }
+
+        // Custom Toast Notification System
+        function showToast(message, type = "success") {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.innerText = message;
+            
+            if(type === "success") {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-lg";
+            } else {
+                toastIcon.className = "fa-solid fa-triangle-exclamation text-rose-400 text-lg";
+            }
+
+            // Show Toast Animation
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
